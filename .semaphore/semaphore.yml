@@ -12,7 +12,13 @@ blocks:
           commands:
             - checkout
             - sem-version node 16.7.0
-            - cache restore node-$SEMAPHORE_GIT_BRANCH api/node_modules
-            - npm --prefix ./api/ install
-            - cache store node-$SEMAPHORE_GIT_BRANCH api/node_modules
-            - npm --prefix ./api/ test
+            - cd api
+            - cache restore node_modules
+            - npm install
+            - cache store node_modules
+            - 'curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter'
+            - chmod +x ./cc-test-reporter
+            - ./cc-test-reporter before-build
+            - npm test
+            - 'exitcode=$(if [ "$SEMAPHORE_THREAD_RESULT" == "passed" ]; then echo 0; else echo 1; fi)'
+            - ./cc-test-reporter after-build --exit-code $exitcode
