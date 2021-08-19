@@ -3,7 +3,7 @@ services:
   web:
     image: discord_clone_web:0.0.1
     build: .
-    command: bash -c "node api/index.js"
+    command: bash -c "npm --prefix ./api/ run start"
     restart: always
     volumes:
       - .:/myapp
